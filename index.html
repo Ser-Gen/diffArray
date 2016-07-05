@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>diffInline</title>
+<style>
+
+html,
+body,
+table {
+	height: 100%
+}
+body {
+	background: #eee;
+	box-sizing: border-box;
+	font: 12px sans-serif;
+	margin: 0;
+	padding-top: 1.8em;
+}
+table {
+	table-layout: fixed;
+	width: 100%;
+}
+td {
+	width: 33%;
+	padding: 3px 4px;
+	border: 1px solid transparent;
+	vertical-align: top;
+	font: 1em monospace;
+	text-align: left;
+	white-space: pre-wrap;
+}
+pre {
+	white-space: pre-wrap;
+}
+h1 {
+	display: inline;
+	font-size: 100%;
+}
+del {
+	text-decoration: none;
+	color: #b30000;
+	background: #fadad7;
+}
+ins {
+	background: #eaf2c2;
+	color: #406619;
+	text-decoration: none;
+}
+
+[contentEditable] {
+	background: #F9F9F9;
+	border-color: #BBB #D9D9D9 #DDD;
+	border-radius: 4px;
+	-webkit-user-modify: read-write-plaintext-only;
+	outline: none;
+}
+[contentEditable]:focus {
+	background: #FFF;
+	border-color: #6699cc;
+	box-shadow: 0 0 4px #2175c9;
+}
+
+</style>
+</head>
+<body>
+
+<table>
+	<tr>
+		<td contenteditable="true" id="a">aura restaurant</td>
+		<td contenteditable="true" id="b">restaurant</td>
+		<td><pre id="result"></pre></td>
+	</tr>
+</table>
+
+<script src="diffInline.js"></script>
+<script>
+
+function proceed () {
+	var diff = diffInline(a.innerHTML.split('\n'), b.innerHTML.split('\n'));
+	var tmp = [];
+
+	diff.data.forEach(function (line) {
+		if (line.type === 'new') {
+			tmp.push('<ins>'+ line.value +'</ins>');
+		} else if (line.type === 'old') {
+			tmp.push('<del>'+ line.value +'</del>');
+		} else {
+			tmp.push(line.value);
+		};
+	});
+
+	result.innerHTML = tmp.join('<br>');
+};
+
+a.onpaste = a.onchange =
+b.onpaste = b.onchange = proceed;
+
+if ('oninput' in a) {
+	a.oninput = b.oninput = proceed;
+} else {
+	a.onkeyup = b.onkeyup = proceed;
+};
+
+window.onload = proceed;
+
+</script>
+</body>
+</html>
