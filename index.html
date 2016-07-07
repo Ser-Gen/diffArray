@@ -15,7 +15,6 @@ body {
 	box-sizing: border-box;
 	font: 12px sans-serif;
 	margin: 0;
-	padding-top: 1.8em;
 }
 table {
 	table-layout: fixed;
@@ -31,6 +30,7 @@ td {
 	white-space: pre-wrap;
 }
 pre {
+	margin: 0;
 	white-space: pre-wrap;
 }
 h1 {
@@ -38,13 +38,15 @@ h1 {
 	font-size: 100%;
 }
 del {
-	text-decoration: none;
-	color: #b30000;
 	background: #fadad7;
+	color: #b30000;
+	display: block;
+	text-decoration: none;
 }
 ins {
 	background: #eaf2c2;
 	color: #406619;
+	display: block;
 	text-decoration: none;
 }
 
@@ -77,20 +79,47 @@ ins {
 <script>
 
 function proceed () {
-	var diff = diffInline(a.innerHTML.split('\n'), b.innerHTML.split('\n'));
-	var tmp = [];
+	result.innerHTML = '';
+
+	var diff = diffInline(a.textContent.split('\n'), b.textContent.split('\n'));
+	var tmp = document.createDocumentFragment();
 
 	diff.data.forEach(function (line) {
 		if (line.type === 'new') {
-			tmp.push('<ins>'+ line.value +'</ins>');
-		} else if (line.type === 'old') {
-			tmp.push('<del>'+ line.value +'</del>');
-		} else {
-			tmp.push(line.value);
+			var elem = document.createElement('ins');
+
+			elem.textContent = line.value;
+			tmp.appendChild(elem);
+		}
+		else if (line.type === 'old') {
+			var elem = document.createElement('del');
+
+			elem.textContent = line.value;
+			tmp.appendChild(elem);
+		}
+		else {
+			var elem = document.createElement('div');
+
+			elem.textContent = line.value;
+			tmp.appendChild(elem);
 		};
 	});
 
-	result.innerHTML = tmp.join('<br>');
+	result.appendChild(tmp);
+};
+
+a.ondrop = b.ondrop = function (e) {
+	e.preventDefault();
+
+	var target = this;
+	var file = e.dataTransfer.files[0];
+	var reader = new FileReader();
+
+	reader.onload = function (e) {
+		target.textContent = e.target.result;
+		proceed();
+	};
+	reader.readAsText(file);
 };
 
 a.onpaste = a.onchange =
