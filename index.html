@@ -7,27 +7,40 @@
 
 html,
 body,
-table {
+.group {
 	height: 100%
 }
 body {
 	background: #eee;
 	box-sizing: border-box;
-	font: 12px sans-serif;
+	font: 12px monospace;
 	margin: 0;
 }
-table {
+.group {
+	display: table;
 	table-layout: fixed;
 	width: 100%;
 }
-td {
-	width: 33%;
-	padding: 3px 4px;
-	border: 1px solid transparent;
-	vertical-align: top;
-	font: 1em monospace;
+.box {
+	display: table-cell;
 	text-align: left;
+	height: 100vh;
+	padding: 3px 0;
+	vertical-align: top;
+	box-sizing: border-box;
+}
+.box + .box {
+	padding-left: 4px;
+}
+textarea {
+	border: 1px solid transparent;
+	box-sizing: border-box;
+	font: inherit;
+	width: 100%;
+	height: 100%;
+	margin: 0;
 	white-space: pre-wrap;
+	resize: none;
 }
 pre {
 	margin: 0;
@@ -36,6 +49,12 @@ pre {
 h1 {
 	display: inline;
 	font-size: 100%;
+}
+
+del,
+ins {
+	line-height: 1em;
+	min-height: 1em;
 }
 del {
 	background: #fadad7;
@@ -50,30 +69,19 @@ ins {
 	text-decoration: none;
 }
 
-[contentEditable] {
-	background: #F9F9F9;
-	border-color: #BBB #D9D9D9 #DDD;
-	border-radius: 4px;
-	-webkit-user-modify: read-write-plaintext-only;
-	outline: none;
-}
-[contentEditable]:focus {
-	background: #FFF;
-	border-color: #6699cc;
-	box-shadow: 0 0 4px #2175c9;
-}
-
 </style>
 </head>
 <body>
 
-<table>
-	<tr>
-		<td contenteditable="true" id="a">aura restaurant</td>
-		<td contenteditable="true" id="b">restaurant</td>
-		<td><pre id="result"></pre></td>
-	</tr>
-</table>
+<div class="group">
+	<div class="box">
+		<textarea id="a" spellcheck="false">aura restaurant</textarea>
+	</div>
+	<div class="box">
+		<textarea id="b" spellcheck="false">restaurant</textarea>
+	</div>
+	<div class="box"><pre id="result"></pre></div>
+</div>
 
 <script src="diffInline.js"></script>
 <script>
@@ -81,7 +89,7 @@ ins {
 function proceed () {
 	result.innerHTML = '';
 
-	var diff = diffInline(a.textContent.split('\n'), b.textContent.split('\n'));
+	var diff = diffInline(a.value.split('\n'), b.value.split('\n'));
 	var tmp = document.createDocumentFragment();
 
 	diff.data.forEach(function (line) {
