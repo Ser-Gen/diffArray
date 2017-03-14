@@ -158,14 +158,14 @@
 				tmpB = tmpB.concat(checkAB.b);
 			}
 
-			// добавлено новое
-			else if (checkB.length <= checkA.length) {
-				tmpB = tmpB.concat(checkB);
+			// что-то пропало
+			else if (checkA.length <= checkB.length) {
+				tmpA = tmpA.concat(checkA);
 			}
 
-			// что-то пропало
+			// добавлено новое
 			else {
-				tmpA = tmpA.concat(checkA);
+				tmpB = tmpB.concat(checkB);
 			};
 		};
 	};
